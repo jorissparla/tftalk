@@ -1,10 +1,10 @@
 import * as React from "react";
 import { db } from "./firebase";
+import { UserProps } from "./types";
 
-interface Props {}
-
-export const ChatInputBox: React.FC<Props> = () => {
+export const ChatInputBox: React.FC<UserProps> = ({ user }) => {
   const [message, setMessage] = React.useState("");
+  console.log("user", user);
   return (
     <form
       onSubmit={event => {
@@ -14,7 +14,12 @@ export const ChatInputBox: React.FC<Props> = () => {
         db.collection("channels")
           .doc("general")
           .collection("messages")
-          .add({ text: message, createdat: Date.now() });
+          .add({
+            user: db.collection("users").doc(user.uid),
+
+            text: message,
+            createdAt: Date.now()
+          });
         //event.target.reset();
         setMessage("");
       }}

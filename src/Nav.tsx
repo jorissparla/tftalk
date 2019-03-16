@@ -1,28 +1,26 @@
-import React, { FC, useState, useEffect } from "react";
+import React from "react";
+import { useCollection } from "./useCollection";
+import { firebase } from "./firebase";
+import { UserProps } from "./types";
 
-import { db } from "./firebase";
-interface Props {}
+type Channel = {
+  id: string;
+  topic: string;
+};
 
-export const Nav: React.FC<Props> = () => {
-  const [channels, setChannels] = useState([{ topic: "HardCoded", id: "General" }]);
-
-  useEffect(() => {
-    return db.collection("channels").onSnapshot(snapshot => {
-      const docs: any = [];
-      snapshot.forEach(doc => {
-        docs.push({ ...doc.data(), id: doc.id });
-      });
-      setChannels(docs);
-    });
-  }, []);
+export const Nav: React.FC<UserProps> = ({ user }) => {
+  const channels: Channel[] = useCollection("channels");
+  console.log(channels);
   return (
     <div className="Nav">
       <div className="User">
-        <img className="UserImage" alt="whatever" src="https://placekitten.com/64/64" />
+        <img className="UserImage" alt="whatever" src={user.photoURL} />
         <div>
-          <div>Joris Sparla</div>
+          <div>{user.displayName}</div>
           <div>
-            <button className="text-button">log out</button>
+            <button className="text-button" onClick={() => firebase.auth().signOut()}>
+              log out
+            </button>
           </div>
         </div>
       </div>

@@ -3,16 +3,19 @@ import { ChannelInfo } from "./ChannelInfo";
 import { Messages } from "./Messages";
 import { ChatInputBox } from "./ChatInputBox";
 import { Members } from "./Members";
+import { UserProps } from "./types";
 
-interface Props {}
+interface ChannelProps extends UserProps {
+  path: string;
+}
 
-export const Channel: React.FC<Props> = () => {
+export const Channel: React.FC<ChannelProps> = ({ path, user }) => {
   return (
     <div className="Channel">
       <div className="ChannelMain">
         <ChannelInfo />
         <Messages />
-        <ChatInputBox />
+        <ChatInputBox user={user} />
       </div>
       <Members />
     </div>
