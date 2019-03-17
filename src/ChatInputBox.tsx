@@ -2,17 +2,19 @@ import * as React from "react";
 import { db } from "./firebase";
 import { UserProps } from "./types";
 
-export const ChatInputBox: React.FC<UserProps> = ({ user }) => {
+interface ChatInputBoxProps extends UserProps {
+  channelId: string;
+}
+
+export const ChatInputBox: React.FC<ChatInputBoxProps> = ({ user, channelId }) => {
   const [message, setMessage] = React.useState("");
-  console.log("user", user);
   return (
     <form
       onSubmit={event => {
         event.preventDefault();
         const value = event.target;
-        console.log(message);
         db.collection("channels")
-          .doc("general")
+          .doc(channelId)
           .collection("messages")
           .add({
             user: db.collection("users").doc(user.uid),

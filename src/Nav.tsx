@@ -1,16 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useCollection } from "./useCollection";
-import { firebase } from "./firebase";
-import { UserProps } from "./types";
-
-type Channel = {
-  id: string;
-  topic: string;
-};
+import { firebase, db } from "./firebase";
+import { UserProps, Channel } from "./types";
+import { Link } from "@reach/router";
 
 export const Nav: React.FC<UserProps> = ({ user }) => {
   const channels: Channel[] = useCollection("channels");
-  console.log(channels);
   return (
     <div className="Nav">
       <div className="User">
@@ -26,7 +21,7 @@ export const Nav: React.FC<UserProps> = ({ user }) => {
       </div>
       <nav className="ChannelNav">
         {channels.map(channel => (
-          <a href={`"/channel/${channel.id}`} key={channel.id}>{`# ${channel.id}`}</a>
+          <Link to={`/channel/${channel.id}`} key={channel.id}>{`# ${channel.id}`}</Link>
         ))}
       </nav>
     </div>

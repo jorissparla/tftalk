@@ -1,30 +1,37 @@
+import { differenceInSeconds, format, isSameDay } from "date-fns";
+import { useEffect, useRef } from "react";
 import * as React from "react";
+import { UserProps, IMessage } from "./types";
 import { useCollection } from "./useCollection";
-import { db } from "./firebase";
-import { User, UserProps } from "./types";
+import { useDocWithCache } from "./useDoc";
 
-interface Props {}
+interface Props {
+  channelId: string;
+}
 
-export type IMessage = {
-  id: string;
-  text: string;
-  createdAt: Date;
-  user: any;
-};
+function useChatScrollManager(ref: React.RefObject<HTMLDivElement>) {
+  useEffect(() => {
+    const node = ref.current;
+    if (node) {
+      node.scrollTop = node.scrollHeight;
+    }
+  });
+}
 
-export const Messages: React.FC<Props> = () => {
-  const initialValue: IMessage[] = [];
+export const Messages: React.FC<Props> = props => {
+  const messages: IMessage[] = useCollection(`channels/${props.channelId}/messages`, "createdAt");
 
-  const messages: IMessage[] = useCollection("channels/general/messages", "createdAt");
-
+  const scrollerRef = useRef<HTMLInputElement>(null);
+  useChatScrollManager(scrollerRef);
   return (
-    <div className="Messages">
+    <div ref={scrollerRef} className="Messages">
       <div className="EndOfMessages">That's every message!</div>
       <div>
         {messages.map((message, index) => {
-          const previousid = messages[index - 1];
-          const showDay = false;
-          const showAvatar = !previousid || message.user.id !== previousid.user.id;
+          const previous = messages[index - 1];
+          const showAvatar = shouldShowAvatar(previous, message);
+          const showDay = shouldShowDay(previous, message);
+
           return showAvatar ? (
             <FirstMessageFromUser message={message} showDay={showDay} key={message.id} />
           ) : (
@@ -45,35 +52,20 @@ export interface MessageProps {
   key: string;
 }
 
-interface U {
+export interface U {
   user: UserProps;
   id: string;
 }
 
-function useDoc(path: string) {
-  const [doc, setDoc] = React.useState<U | undefined>(undefined);
-
-  async function getDoc() {
-    await db.doc(path).onSnapshot((doc: any) => {
-      setDoc({ ...doc.data(), id: doc.id });
-    });
-  }
-  React.useEffect(() => {
-    getDoc();
-  }, []);
-
-  return doc;
-}
-
 const FirstMessageFromUser: React.FC<MessageProps> = ({ message, showDay }) => {
-  const author: any = useDoc(message.user.path);
+  const author: any = useDocWithCache(message.user.path);
 
   return (
     <div key={message.id}>
       {showDay && (
         <div className="Day">
           <div className="DayLine" />
-          <div className="DayText">12/7/2018</div>
+          <div className="DayText">{format(message.createdAt, "DD/MM/YYYY")}</div>
           <div className="DayLine" />
         </div>
       )}
@@ -87,7 +79,7 @@ const FirstMessageFromUser: React.FC<MessageProps> = ({ message, showDay }) => {
         <div className="Author">
           <div>
             <span className="UserName">{author && author.displayName} </span>
-            <span className="TimeStamp">{new Date(message.createdAt).toTimeString()}</span>
+            <span className="TimeStamp">{format(message.createdAt, "h:mm A")}</span>
           </div>
           <div className="MessageContent">{message.text}</div>
         </div>
@@ -95,4 +87,28 @@ const FirstMessageFromUser: React.FC<MessageProps> = ({ message, showDay }) => {
     </div>
   );
 };
+
+function shouldShowDay(previous: IMessage, message: any) {
+  const isFirst = !previous;
+  if (isFirst) {
+    return true;
+  }
+  return !isSameDay(previous.createdAt, message.createdAt);
+}
+
+function shouldShowAvatar(previous: IMessage, message: any) {
+  const isFirst = !previous;
+  if (isFirst) {
+    return true;
+  }
+  const differentUser = message.user.id !== previous.user.id;
+  if (differentUser) {
+    return true;
+  }
+  const hasBeenAWhile = differenceInSeconds(message.createdAt, previous.createdAt) > 180;
+  if (hasBeenAWhile) {
+    return true;
+  }
+  return false;
+}
 export { FirstMessageFromUser };
