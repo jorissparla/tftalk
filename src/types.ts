@@ -2,6 +2,12 @@ export type User = {
   displayName?: string;
   photoURL?: string;
   uid?: string;
+  status?: Status;
+};
+
+type Status = {
+  state: string;
+  lastchanged: Date;
 };
 export interface UserProps {
   user: User;

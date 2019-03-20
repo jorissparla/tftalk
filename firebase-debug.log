@@ -1,0 +1,14 @@
+[debug] [2019-03-20T21:20:41.172Z] ----------------------------------------------------------------------
+[debug] [2019-03-20T21:20:41.175Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\joris\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions
+[debug] [2019-03-20T21:20:41.175Z] CLI Version:   6.5.0
+[debug] [2019-03-20T21:20:41.175Z] Platform:      win32
+[debug] [2019-03-20T21:20:41.175Z] Node Version:  v11.10.0
+[debug] [2019-03-20T21:20:41.177Z] Time:          Wed Mar 20 2019 22:20:41 GMT+0100 (Central European Standard Time)
+[debug] [2019-03-20T21:20:41.177Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2019-03-20T21:20:41.187Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2019-03-20T21:20:41.187Z] > authorizing via signed-in user
+[debug] [2019-03-20T21:20:41.188Z] [iam] checking project chatapp-1b355 for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2019-03-20T21:20:41.189Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/chatapp-1b355:testIamPermissions  
+
+[debug] [2019-03-20T21:20:41.938Z] <<< HTTP RESPONSE 200

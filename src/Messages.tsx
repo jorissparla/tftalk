@@ -9,22 +9,37 @@ interface Props {
   channelId: string;
 }
 
-function useChatScrollManager(ref: React.RefObject<HTMLDivElement>) {
+function ChatScroller(props: any) {
+  const ref = useRef<HTMLInputElement>(null);
+  const shouldScrollRef = useRef(true);
   useEffect(() => {
     const node = ref.current;
     if (node) {
-      node.scrollTop = node.scrollHeight;
+      if (shouldScrollRef.current) {
+        node.scrollTop = node.scrollHeight;
+      }
     }
   });
+
+  const handleScroll = () => {
+    const node = ref.current;
+    if (node) {
+      const { scrollHeight, scrollTop, clientHeight } = node;
+      const atBottom = scrollHeight === scrollTop + clientHeight;
+      shouldScrollRef.current = atBottom;
+    }
+  };
+
+  return <div {...props} ref={ref} onScroll={handleScroll} />;
 }
+
+function useChatScrollManager(ref: React.RefObject<HTMLDivElement>) {}
 
 export const Messages: React.FC<Props> = props => {
   const messages: IMessage[] = useCollection(`channels/${props.channelId}/messages`, "createdAt");
 
-  const scrollerRef = useRef<HTMLInputElement>(null);
-  useChatScrollManager(scrollerRef);
   return (
-    <div ref={scrollerRef} className="Messages">
+    <ChatScroller className="Messages">
       <div className="EndOfMessages">That's every message!</div>
       <div>
         {messages.map((message, index) => {
@@ -43,7 +58,7 @@ export const Messages: React.FC<Props> = props => {
           );
         })}
       </div>
-    </div>
+    </ChatScroller>
   );
 };
 export interface MessageProps {

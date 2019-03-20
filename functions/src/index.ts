@@ -1,8 +1,11 @@
-import * as functions from "firebase-functions";
-
-// // Start writing Firebase Functions
-// // https://firebase.google.com/docs/functions/typescript
+// import * as admin from "firebase-admin";
+import * as onUserStatusChanged from "./triggers/onUserStatusChanged";
+import * as helloWorld from "./routes/helloWorld";
+import * as onCleverBotMessage from "./triggers/onCleverBotMessage";
 //
-export const helloWorld = functions.https.onRequest((request, response) => {
-  response.send("Hello from Firebase!");
-});
+
+exports.helloWorld = helloWorld;
+
+exports.onUserStatusChanged = onUserStatusChanged;
+
+exports.onCleverBotMessage = onCleverBotMessage;
