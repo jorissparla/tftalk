@@ -26,7 +26,7 @@ module.exports = functions.firestore.document("channels/general/messages/{messag
   }
   return db.collection("channels/general/messages").add({
     text: "Hi There!",
-    createdAt: new Date(),
+    createdAt: new Date().toLocaleDateString(),
     user: db.collection("users").doc("slimmebot")
   });
 });
